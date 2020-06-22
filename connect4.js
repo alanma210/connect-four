@@ -107,41 +107,36 @@ function makeHtmlBoard() {
 
 function findSpotForCol(x) {
 	// TODO: write the real version of this, rather than always returning 0
-	let values = [];
+	let colValues = [];
 	for (let y = 0; y < board.length; y++) {
-		values.push(board[y][x]);
+		colValues.push(board[y][x]);
 	}
-	// console.log(values);
-	let allNulls = values.every(function (val) {
+
+	let colEmpty = colValues.every(function (val) {
 		return val === null;
 	});
-	// console.log('allNulls: ' + allNulls);
-	let noNulls = values.every(function (val) {
+
+	let colFilled = colValues.every(function (val) {
 		return val !== null;
 	});
-	// console.log('noNulls: ' + noNulls);
-	if (noNulls) {
+
+	if (colFilled) {
 		return null;
-	} else if (allNulls) {
+	} else if (colEmpty) {
 		return board.length - 1;
 	} else {
-		let y = values.findIndex(function (val) {
+		let y = colValues.findIndex(function (val) {
 			return val !== null;
 		});
-		if (y === 0) {
-			return null;
-		} else return y - 1;
+		return y - 1;
 	}
 }
 
 function allFilled(board) {
 	// just check the top row
-	for (let y = 0; y < HEIGHT; y++) {
-		let row = board[y];
-		return row.every(function (val) {
-			return val !== null;
-		});
-	}
+	return board[0].every(function (val) {
+		return val !== null;
+	});
 }
 
 /** placeInTable: update DOM to place piece into HTML table of board */
