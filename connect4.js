@@ -44,7 +44,10 @@ buttons.addEventListener('click', function (e) {
 		location.reload();
 	}
 	if (e.target.className === 'make-board') {
-		makeBoard();
+		const gameDiv = document.getElementById('game');
+		const htmlBoard = document.getElementById('board');
+		// gameDiv.removeChild(htmlBoard);
+		// makeBoard();
 		makeHtmlBoard();
 	}
 });
@@ -53,8 +56,7 @@ buttons.addEventListener('click', function (e) {
 
 function makeHtmlBoard() {
 	// TODO: get "htmlBoard" variable from the item in HTML w/ID of "board"
-	// let WIDTH = 7;
-	// let HEIGHT = 6;
+
 	const gameDiv = document.getElementById('game');
 	let htmlBoard = document.getElementById('board');
 	const boardHeight = document.getElementById('height');
