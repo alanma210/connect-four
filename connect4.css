@@ -23,6 +23,22 @@ h1 {
 	display: inline-block;
 }
 
+.p1 {
+	margin: 5px;
+	width: 80%;
+	height: 80%;
+	background-color: red;
+	border-radius: 50%;
+}
+
+.p2 {
+	margin: 5px;
+	width: 80%;
+	height: 80%;
+	background-color: blue;
+	border-radius: 50%;
+}
+
 /* TODO: make pieces red/blue,  depending on player 1/2 piece */
 .piece.p1 {
 	margin: 5px;
@@ -47,14 +63,12 @@ h1 {
 	border: dashed 1px darkslateblue;
 }
 
-#column-top td:hover {
-	margin: 5px;
-	width: 80%;
-	height: 80%;
+/* #column-top td:hover {
 	background-color: purple;
 	border-radius: 50%;
-	display: inline-block;
-}
+	margin: 5px;
+	width: 10px;
+} */
 
 body {
 	background-color: rgb(231, 204, 168);

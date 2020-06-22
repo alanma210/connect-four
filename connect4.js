@@ -9,6 +9,7 @@ let WIDTH = 7;
 let HEIGHT = 6;
 
 let currPlayer = 1; // active player: 1 or 2
+let endGameFlag = false;
 const gameContainer = document.getElementById('game');
 const buttons = document.getElementById('buttons');
 const board = []; // array of rows, each row is array of cells  (board[y][x])
@@ -71,16 +72,18 @@ function makeHtmlBoard() {
 	const top = document.createElement('tr'); // where currPlayer places their piece
 	top.setAttribute('id', 'column-top'); // set id = 'column-top for this section
 	top.addEventListener('click', handleClick); // add click event listener, call handleClick
-	// top.onmouseover = function () {
-	// 	top.className = 'p' + currPlayer;
-	// };
-	// top.onmouseout = function () {};
 
 	// populateTopRow
 
 	for (let x = 0; x < WIDTH; x++) {
 		const headCell = document.createElement('td');
 		headCell.setAttribute('id', x);
+		headCell.onmouseover = function () {
+			headCell.classList.add('p' + currPlayer);
+		};
+		headCell.onmouseout = function () {
+			headCell.classList.remove('p' + currPlayer);
+		};
 		top.append(headCell);
 	}
 	htmlBoard.append(top);
@@ -147,7 +150,9 @@ function placeInTable(y, x, currPlayer) {
 	// TODO: make a div and insert into correct table cell
 	const newDiv = document.createElement('div');
 	const targetCell = document.getElementById(y + '-' + x);
-	// newDiv.innerText = 'test..';
+	const targetCol = document.getElementById(x);
+
+	targetCol.classList.remove('p' + currPlayer);
 	newDiv.classList.add('piece');
 	newDiv.classList.add('p' + currPlayer);
 	targetCell.append(newDiv);
@@ -160,40 +165,45 @@ function endGame(msg) {
 	setTimeout(function () {
 		alert(msg);
 	}, 500);
+	endGameFlag = true;
 }
 
 /** handleClick: handle click of column top to play piece */
 
 function handleClick(evt) {
-	// first get the coordinate of the piece placed
-	// get x from ID of clicked cell (tr)
-	const x = +evt.target.id;
-
-	// get next spot (top empty) in column (if none, ignore click)
-	const y = findSpotForCol(x);
-	if (y === null) {
+	if (endGameFlag) {
 		return;
+	} else {
+		// first get the coordinate of the piece placed
+		// get x from ID of clicked cell (tr)
+		const x = +evt.target.id;
+
+		// get next spot (top empty) in column (if none, ignore click)
+		const y = findSpotForCol(x);
+		if (y === null) {
+			return;
+		}
+
+		// place piece in board and add to HTML table
+		// TODO: add line to update in-memory board
+		placeInTable(y, x, currPlayer);
+		board[y][x] = currPlayer;
+
+		// check for win
+		if (checkForWin(y, x, currPlayer)) {
+			return endGame(`Player ${currPlayer} won!`);
+		}
+
+		// check for tie
+		// TODO: check if all cells in board are filled; if so call, call endGame
+		if (allFilled(board)) {
+			return endGame('Game is tied!');
+		}
+
+		// switch players
+		// TODO: switch currPlayer 1 <-> 2
+		currPlayer === 1 ? (currPlayer = 2) : (currPlayer = 1);
 	}
-
-	// place piece in board and add to HTML table
-	// TODO: add line to update in-memory board
-	placeInTable(y, x, currPlayer);
-	board[y][x] = currPlayer;
-
-	// check for win
-	if (checkForWin(y, x, currPlayer)) {
-		return endGame(`Player ${currPlayer} won!`);
-	}
-
-	// check for tie
-	// TODO: check if all cells in board are filled; if so call, call endGame
-	if (allFilled(board)) {
-		return endGame('Game is tied!');
-	}
-
-	// switch players
-	// TODO: switch currPlayer 1 <-> 2
-	currPlayer === 1 ? (currPlayer = 2) : (currPlayer = 1);
 }
 
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
