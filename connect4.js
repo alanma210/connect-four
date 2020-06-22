@@ -29,7 +29,7 @@ function makeBoard() {
 	const boardWidth = document.getElementById('width');
 	let HEIGHT = boardHeight.value;
 	let WIDTH = boardWidth.value;
-	for (let i = HEIGHT-1; i > -1; i--) {
+	for (let i = HEIGHT - 1; i > -1; i--) {
 		board[i] = [];
 		for (let j = 0; j < WIDTH; j++) {
 			board[i][j] = null;
@@ -71,6 +71,12 @@ function makeHtmlBoard() {
 	const top = document.createElement('tr'); // where currPlayer places their piece
 	top.setAttribute('id', 'column-top'); // set id = 'column-top for this section
 	top.addEventListener('click', handleClick); // add click event listener, call handleClick
+	// top.onmouseover = function () {
+	// 	top.className = 'p' + currPlayer;
+	// };
+	// top.onmouseout = function () {};
+
+	// populateTopRow
 
 	for (let x = 0; x < WIDTH; x++) {
 		const headCell = document.createElement('td');
@@ -78,6 +84,8 @@ function makeHtmlBoard() {
 		top.append(headCell);
 	}
 	htmlBoard.append(top);
+
+	// populateTable
 
 	// TODO: add comment for this code
 	for (let y = 0; y < HEIGHT; y++) {
@@ -124,6 +132,7 @@ function findSpotForCol(x) {
 }
 
 function allFilled(board) {
+	// just check the top row
 	for (let y = 0; y < HEIGHT; y++) {
 		let row = board[y];
 		return row.every(function (val) {
@@ -139,13 +148,8 @@ function placeInTable(y, x, currPlayer) {
 	const newDiv = document.createElement('div');
 	const targetCell = document.getElementById(y + '-' + x);
 	// newDiv.innerText = 'test..';
-	if (currPlayer === 1) {
-		newDiv.classList.add('piece');
-		newDiv.classList.add('p1');
-	} else {
-		newDiv.classList.add('piece');
-		newDiv.classList.add('p2');
-	}
+	newDiv.classList.add('piece');
+	newDiv.classList.add('p' + currPlayer);
 	targetCell.append(newDiv);
 }
 
@@ -189,9 +193,7 @@ function handleClick(evt) {
 
 	// switch players
 	// TODO: switch currPlayer 1 <-> 2
-	if (currPlayer === 1) {
-		currPlayer = 2;
-	} else currPlayer = 1;
+	currPlayer === 1 ? (currPlayer = 2) : (currPlayer = 1);
 }
 
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
