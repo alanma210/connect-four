@@ -5,8 +5,8 @@
  * board fills (tie)
  */
 
-const WIDTH = 7;
-const HEIGHT = 6;
+let WIDTH = 7;
+let HEIGHT = 6;
 
 let currPlayer = 1; // active player: 1 or 2
 const gameContainer = document.getElementById('game');
@@ -24,17 +24,18 @@ boardWidth.value = WIDTH;
 function makeBoard() {
 	// TODO: set "board" to empty HEIGHT x WIDTH matrix array
 	// console.log(WIDTH, HEIGHT);
+	// const board = [];
 	const boardHeight = document.getElementById('height');
 	const boardWidth = document.getElementById('width');
 	let HEIGHT = boardHeight.value;
 	let WIDTH = boardWidth.value;
-	for (let i = 0; i < HEIGHT; i++) {
+	for (let i = HEIGHT-1; i > -1; i--) {
 		board[i] = [];
 		for (let j = 0; j < WIDTH; j++) {
 			board[i][j] = null;
 		}
 	}
-	// console.log(board);
+	console.log(board);
 }
 
 buttons.addEventListener('click', function (e) {
@@ -51,18 +52,20 @@ buttons.addEventListener('click', function (e) {
 
 function makeHtmlBoard() {
 	// TODO: get "htmlBoard" variable from the item in HTML w/ID of "board"
-	const game = document.getElementById('game');
-	const madeBoard = document.getElementById('made-board');
-	const htmlBoard = document.getElementById('board');
+	// let WIDTH = 7;
+	// let HEIGHT = 6;
+	const gameDiv = document.getElementById('game');
+	let htmlBoard = document.getElementById('board');
 	const boardHeight = document.getElementById('height');
 	const boardWidth = document.getElementById('width');
-	let HEIGHT = boardHeight.value;
-	let WIDTH = boardWidth.value;
+	HEIGHT = boardHeight.value;
+	WIDTH = boardWidth.value;
 	console.log(WIDTH, HEIGHT);
 
-	if (madeBoard) {
-		game.replaceChild(htmlBoard, madeBoard);
-	}
+	htmlBoard.remove();
+	htmlBoard = document.createElement('table');
+	htmlBoard.id = 'board';
+	gameDiv.appendChild(htmlBoard);
 
 	// TODO: add comment for this code
 	const top = document.createElement('tr'); // where currPlayer places their piece
@@ -86,7 +89,7 @@ function makeHtmlBoard() {
 		}
 		htmlBoard.append(row);
 	}
-	htmlBoard.id = 'made-board';
+	// htmlBoard.id = 'made-board';
 }
 
 /** findSpotForCol: given column x, return top empty y (null if filled) */
@@ -94,7 +97,7 @@ function makeHtmlBoard() {
 function findSpotForCol(x) {
 	// TODO: write the real version of this, rather than always returning 0
 	let values = [];
-	for (let y = 0; y < HEIGHT; y++) {
+	for (let y = 0; y < board.length; y++) {
 		values.push(board[y][x]);
 	}
 	// console.log(values);
@@ -109,7 +112,7 @@ function findSpotForCol(x) {
 	if (noNulls) {
 		return null;
 	} else if (allNulls) {
-		return HEIGHT - 1;
+		return board.length - 1;
 	} else {
 		let y = values.findIndex(function (val) {
 			return val !== null;
