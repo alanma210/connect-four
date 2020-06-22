@@ -18,42 +18,37 @@ const boardWidth = document.getElementById('width');
 boardHeight.value = HEIGHT;
 boardWidth.value = WIDTH;
 
+buttons.addEventListener('click', function (e) {
+	if (e.target.className === 'restart') {
+		location.reload();
+	}
+	if (e.target.className === 'make-board') {
+		makeBoard();
+		makeHtmlBoard();
+	}
+});
+
 /** makeBoard: create in-JS board structure:
  *    board = array of rows, each row is array of cells  (board[y][x])
  */
-
 function makeBoard() {
 	// TODO: set "board" to empty HEIGHT x WIDTH matrix array
-	// console.log(WIDTH, HEIGHT);
-	// const board = [];
+	board.length = 0;
 	const boardHeight = document.getElementById('height');
 	const boardWidth = document.getElementById('width');
 	let HEIGHT = boardHeight.value;
 	let WIDTH = boardWidth.value;
+	console.log(HEIGHT, WIDTH);
 	for (let i = HEIGHT - 1; i > -1; i--) {
 		board[i] = [];
-		for (let j = 0; j < WIDTH; j++) {
+		for (let j = WIDTH - 1; j > -1; j--) {
 			board[i][j] = null;
 		}
 	}
 	console.log(board);
 }
 
-buttons.addEventListener('click', function (e) {
-	if (e.target.className === 'restart') {
-		location.reload();
-	}
-	if (e.target.className === 'make-board') {
-		const gameDiv = document.getElementById('game');
-		const htmlBoard = document.getElementById('board');
-		// gameDiv.removeChild(htmlBoard);
-		// makeBoard();
-		makeHtmlBoard();
-	}
-});
-
 /** makeHtmlBoard: make HTML table and row of column tops. */
-
 function makeHtmlBoard() {
 	// TODO: get "htmlBoard" variable from the item in HTML w/ID of "board"
 
@@ -63,7 +58,6 @@ function makeHtmlBoard() {
 	const boardWidth = document.getElementById('width');
 	HEIGHT = boardHeight.value;
 	WIDTH = boardWidth.value;
-	console.log(WIDTH, HEIGHT);
 
 	htmlBoard.remove();
 	htmlBoard = document.createElement('table');
@@ -102,17 +96,16 @@ function makeHtmlBoard() {
 		}
 		htmlBoard.append(row);
 	}
-	// htmlBoard.id = 'made-board';
 }
 
 /** findSpotForCol: given column x, return top empty y (null if filled) */
-
 function findSpotForCol(x) {
 	// TODO: write the real version of this, rather than always returning 0
 	let colValues = [];
+
 	for (let y = 0; y < board.length; y++) {
 		colValues.push(board[y][x]);
-	}
+	} // extract column values from top down
 
 	let colEmpty = colValues.every(function (val) {
 		return val === null;
@@ -134,17 +127,10 @@ function findSpotForCol(x) {
 	}
 }
 
-function allFilled(board) {
-	// just check the top row
-	return board[0].every(function (val) {
-		return val !== null;
-	});
-}
-
 /** placeInTable: update DOM to place piece into HTML table of board */
-
 function placeInTable(y, x, currPlayer) {
 	// TODO: make a div and insert into correct table cell
+	console.log(y, x);
 	const newDiv = document.createElement('div');
 	const targetCell = document.getElementById(y + '-' + x);
 	const targetCol = document.getElementById(x);
@@ -155,8 +141,15 @@ function placeInTable(y, x, currPlayer) {
 	targetCell.append(newDiv);
 }
 
-/** endGame: announce game end */
+// Check if the board is all filled
+function allFilled(board) {
+	// just need to check the top row
+	return board[0].every(function (val) {
+		return val !== null;
+	});
+}
 
+/** endGame: announce game end */
 function endGame(msg) {
 	// TODO: pop up alert message
 	setTimeout(function () {
@@ -166,7 +159,6 @@ function endGame(msg) {
 }
 
 /** handleClick: handle click of column top to play piece */
-
 function handleClick(evt) {
 	if (endGameFlag) {
 		return;
