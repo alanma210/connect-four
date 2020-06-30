@@ -19,7 +19,7 @@ boardHeight.value = 6;
 boardWidth.value = 7;
 
 class Game {
-	constructor(boardWidth = 7, boardHeight = 6) {
+	constructor(boardWidth, boardHeight) {
 		this.WIDTH = boardWidth;
 		this.HEIGHT = boardHeight;
 		this.currPlayer = 1;
@@ -67,14 +67,13 @@ class Game {
 		// populateTopRow
 
 		for (let x = 0; x < this.WIDTH; x++) {
-			console.log(this.currPlayer);
 			const headCell = document.createElement('td');
 			headCell.setAttribute('id', x);
 			// how do i bind this.currentPlyaer?
-			headCell.onmouseover = function () {
+			headCell.onmouseover = () => {
 				headCell.classList.add('p' + this.currPlayer);
 			};
-			headCell.onmouseout = function () {
+			headCell.onmouseout = () => {
 				headCell.classList.remove('p' + this.currPlayer);
 			};
 			top.append(headCell);
@@ -154,6 +153,61 @@ class Game {
 		this.endGameFlag = true;
 	}
 
+	/** checkForWin: check board cell-by-cell for "does a win start here?" */
+
+	checkForWin(y, x, currPlayer) {
+		const _win = (cells) => {
+			// Check four cells to see if they're all color of current player
+			//  - cells: list of four (y, x) cells
+			//  - returns true if all are legal coordinates & all match currPlayer
+
+			return cells.every(
+				([y, x]) =>
+					y >= 0 &&
+					y < this.HEIGHT &&
+					x >= 0 &&
+					x < this.WIDTH &&
+					this.board[y][x] === currPlayer
+			);
+		}
+
+		// TODO: read and understand this code. Add comments to help you.
+		// Every click the code will read a list of 4 cells, starting from [0,0][0,1][0,2][0,3], [0,0][1,1][2,2][3,3], [0,0][1,0][2,0][3,0], etc..
+
+		for (let y = 0; y < this.HEIGHT; y++) {
+			for (let x = 0; x < this.WIDTH; x++) {
+				const horiz = [
+					[y, x],
+					[y, x + 1],
+					[y, x + 2],
+					[y, x + 3]
+				];
+				const vert = [
+					[y, x],
+					[y + 1, x],
+					[y + 2, x],
+					[y + 3, x]
+				];
+				const diagDR = [
+					[y, x],
+					[y + 1, x + 1],
+					[y + 2, x + 2],
+					[y + 3, x + 3]
+				];
+				const diagDL = [
+					[y, x],
+					[y + 1, x - 1],
+					[y + 2, x - 2],
+					[y + 3, x - 3]
+				];
+
+				if (_win(horiz) || _win(vert) || _win(diagDR) || _win(diagDL)) {
+					return true;
+				}
+			}
+		}
+	}
+
 	/** handleClick: handle click of column top to play piece */
 	handleClick(evt) {
 		console.log(this);
@@ -176,74 +230,19 @@ class Game {
 			this.board[y][x] = this.currPlayer;
 
 			// check for win
-			if (checkForWin(y, x, this.currPlayer)) {
-				return endGame(`Player ${this.currPlayer} won!`);
+			if (this.checkForWin(y, x, this.currPlayer)) {
+				return this.endGame(`Player ${this.currPlayer} won!`);
 			}
 
 			// check for tie
 			// TODO: check if all cells in board are filled; if so call, call endGame
 			if (this.allFilled(this.board)) {
-				return endGame('Game is tied!');
+				return this.endGame('Game is tied!');
 			}
 
 			// switch players
 			// TODO: switch currPlayer 1 <-> 2
 			this.currPlayer === 1 ? (this.currPlayer = 2) : (this.currPlayer = 1);
-		}
-	}
-}
-
-/** checkForWin: check board cell-by-cell for "does a win start here?" */
-
-function checkForWin(y, x, currPlayer) {
-	function _win(cells) {
-		// Check four cells to see if they're all color of current player
-		//  - cells: list of four (y, x) cells
-		//  - returns true if all are legal coordinates & all match currPlayer
-
-		return cells.every(
-			([y, x]) =>
-				y >= 0 &&
-				y < this.HEIGHT &&
-				x >= 0 &&
-				x < this.WIDTH &&
-				this.board[y][x] === currPlayer
-		);
-	}
-
-	// TODO: read and understand this code. Add comments to help you.
-	// Every click the code will read a list of 4 cells, starting from [0,0][0,1][0,2][0,3], [0,0][1,1][2,2][3,3], [0,0][1,0][2,0][3,0], etc..
-
-	for (let y = 0; y < this.HEIGHT; y++) {
-		for (let x = 0; x < this.WIDTH; x++) {
-			const horiz = [
-				[y, x],
-				[y, x + 1],
-				[y, x + 2],
-				[y, x + 3]
-			];
-			const vert = [
-				[y, x],
-				[y + 1, x],
-				[y + 2, x],
-				[y + 3, x]
-			];
-			const diagDR = [
-				[y, x],
-				[y + 1, x + 1],
-				[y + 2, x + 2],
-				[y + 3, x + 3]
-			];
-			const diagDL = [
-				[y, x],
-				[y + 1, x - 1],
-				[y + 2, x - 2],
-				[y + 3, x - 3]
-			];
-
-			if (_win(horiz) || _win(vert) || _win(diagDR) || _win(diagDL)) {
-				return true;
-			}
 		}
 	}
 }
