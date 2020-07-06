@@ -5,18 +5,7 @@
  * board fills (tie)
  */
 
-// let WIDTH = 7;
-// let HEIGHT = 6;
-
-// let currPlayer = 1; // active player: 1 or 2
-// let endGameFlag = false;
-const gameContainer = document.getElementById('game');
-const buttons = document.getElementById('buttons');
-const board = []; // array of rows, each row is array of cells  (board[y][x])
-const boardHeight = document.getElementById('height');
-const boardWidth = document.getElementById('width');
-boardHeight.value = 6;
-boardWidth.value = 7;
+const gameContainer = document.getElementById('game'); // not used, just for future reference
 
 class Game {
 	constructor(boardWidth, boardHeight) {
@@ -48,10 +37,17 @@ class Game {
 
 		const gameDiv = document.getElementById('game');
 		let htmlBoard = document.getElementById('board');
-		// const boardHeight = document.getElementById('height');
-		// const boardWidth = document.getElementById('width');
-		// HEIGHT = boardHeight.value;
-		// WIDTH = boardWidth.value;
+		const boardHeight = document.getElementById('height');
+		const boardWidth = document.getElementById('width');
+		const buttons = document.getElementById('buttons');
+		buttons.addEventListener('click', function (e) {
+			if (e.target.className === 'restart') {
+				location.reload();
+			}
+			if (e.target.className === 'make-board') {
+				new Game(boardWidth.value, boardHeight.value);
+			}
+		});
 
 		htmlBoard.remove();
 		htmlBoard = document.createElement('table');
@@ -65,11 +61,10 @@ class Game {
 		top.addEventListener('click', this.handleGameClick); // add click event listener, call handleClick
 
 		// populateTopRow
-
 		for (let x = 0; x < this.WIDTH; x++) {
 			const headCell = document.createElement('td');
 			headCell.setAttribute('id', x);
-			// how do i bind this.currentPlyaer?
+			// how do i bind this.currentPlyaer? Use arrow function.
 			headCell.onmouseover = () => {
 				headCell.classList.add('p' + this.currPlayer);
 			};
@@ -81,8 +76,6 @@ class Game {
 		htmlBoard.append(top);
 
 		// populateTable
-
-		// TODO: add comment for this code
 		for (let y = 0; y < this.HEIGHT; y++) {
 			const row = document.createElement('tr');
 			for (let x = 0; x < this.WIDTH; x++) {
@@ -105,11 +98,9 @@ class Game {
 		let colEmpty = colValues.every(function (val) {
 			return val === null;
 		});
-
 		let colFilled = colValues.every(function (val) {
 			return val !== null;
 		});
-
 		if (colFilled) {
 			return null;
 		} else if (colEmpty) {
@@ -125,7 +116,7 @@ class Game {
 	/** placeInTable: update DOM to place piece into HTML table of board */
 	placeInTable(y, x, currPlayer) {
 		// TODO: make a div and insert into correct table cell
-		console.log(y, x);
+		// console.log(y, x);
 		const newDiv = document.createElement('div');
 		const targetCell = document.getElementById(y + '-' + x);
 		const targetCol = document.getElementById(x);
@@ -154,7 +145,6 @@ class Game {
 	}
 
 	/** checkForWin: check board cell-by-cell for "does a win start here?" */
-
 	checkForWin(y, x, currPlayer) {
 		const _win = (cells) => {
 			// Check four cells to see if they're all color of current player
@@ -169,7 +159,7 @@ class Game {
 					x < this.WIDTH &&
 					this.board[y][x] === currPlayer
 			);
-		}
+		};
 
 		// TODO: read and understand this code. Add comments to help you.
 		// Every click the code will read a list of 4 cells, starting from [0,0][0,1][0,2][0,3], [0,0][1,1][2,2][3,3], [0,0][1,0][2,0][3,0], etc..
@@ -247,17 +237,8 @@ class Game {
 	}
 }
 
-buttons.addEventListener('click', function (e) {
-	if (e.target.className === 'restart') {
-		location.reload();
-	}
-	if (e.target.className === 'make-board') {
-		makeBoard();
-		makeHtmlBoard();
-	}
-});
-
-// makeBoard();
-// makeHtmlBoard();
-
 new Game(6, 7);
+const boardHeight = document.getElementById('height');
+const boardWidth = document.getElementById('width');
+boardHeight.value = 7;
+boardWidth.value = 6;
