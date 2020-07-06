@@ -8,10 +8,11 @@
 const gameContainer = document.getElementById('game'); // not used, just for future reference
 
 class Game {
-	constructor(boardWidth, boardHeight) {
+	constructor(boardWidth, boardHeight, p1, p2) {
+		this.players = [p1, p2];
 		this.WIDTH = boardWidth;
 		this.HEIGHT = boardHeight;
-		this.currPlayer = 1;
+		this.currPlayer = p1;
 		this.endGameFlag = false;
 		this.makeBoard();
 		this.makeHtmlBoard();
@@ -66,10 +67,12 @@ class Game {
 			headCell.setAttribute('id', x);
 			// how do i bind this.currentPlyaer? Use arrow function.
 			headCell.onmouseover = () => {
-				headCell.classList.add('p' + this.currPlayer);
+				headCell.classList.add('piece');
+				headCell.style.backgroundColor = this.currPlayer;
 			};
 			headCell.onmouseout = () => {
-				headCell.classList.remove('p' + this.currPlayer);
+				headCell.classList.remove('piece');
+				headCell.style.backgroundColor = '';
 			};
 			top.append(headCell);
 		}
@@ -114,17 +117,15 @@ class Game {
 	}
 
 	/** placeInTable: update DOM to place piece into HTML table of board */
-	placeInTable(y, x, currPlayer) {
+	placeInTable(y, x) {
 		// TODO: make a div and insert into correct table cell
-		// console.log(y, x);
-		const newDiv = document.createElement('div');
-		const targetCell = document.getElementById(y + '-' + x);
-		const targetCol = document.getElementById(x);
+		const piece = document.createElement('div');
+		piece.classList.add('piece');
+		piece.style.backgroundColor = this.currPlayer;
+		piece.style.top = -50 * (y + 2);
 
-		targetCol.classList.remove('p' + currPlayer);
-		newDiv.classList.add('piece');
-		newDiv.classList.add('p' + currPlayer);
-		targetCell.append(newDiv);
+		const targetCell = document.getElementById(y + '-' + x);
+		targetCell.append(piece);
 	}
 
 	// Check if the board is all filled
@@ -216,7 +217,7 @@ class Game {
 
 			// place piece in board and add to HTML table
 			// TODO: add line to update in-memory board
-			this.placeInTable(y, x, this.currPlayer);
+			this.placeInTable(y, x);
 			this.board[y][x] = this.currPlayer;
 
 			// check for win
@@ -232,12 +233,21 @@ class Game {
 
 			// switch players
 			// TODO: switch currPlayer 1 <-> 2
-			this.currPlayer === 1 ? (this.currPlayer = 2) : (this.currPlayer = 1);
+			this.currPlayer =
+				this.currPlayer === this.players[0] ? this.players[1] : this.players[0];
+			const headCell = document.getElementById(x);
+			headCell.style.backgroundColor = this.currPlayer;
 		}
 	}
 }
 
-new Game(6, 7);
+class Player {
+	constructor(color) {
+		this.color = color;
+	}
+}
+
+new Game(6, 7, 'red', 'blue');
 const boardHeight = document.getElementById('height');
 const boardWidth = document.getElementById('width');
 boardHeight.value = 7;
