@@ -38,17 +38,8 @@ class Game {
 
 		const gameDiv = document.getElementById('game');
 		let htmlBoard = document.getElementById('board');
-		const boardHeight = document.getElementById('height');
-		const boardWidth = document.getElementById('width');
-		const buttons = document.getElementById('buttons');
-		buttons.addEventListener('click', function (e) {
-			if (e.target.className === 'restart') {
-				location.reload();
-			}
-			if (e.target.className === 'make-board') {
-				new Game(boardWidth.value, boardHeight.value);
-			}
-		});
+		const player1 = document.getElementById('player1');
+		const player2 = document.getElementById('player2');
 
 		htmlBoard.remove();
 		htmlBoard = document.createElement('table');
@@ -247,8 +238,16 @@ class Player {
 	}
 }
 
-new Game(6, 7, 'red', 'blue');
-const boardHeight = document.getElementById('height');
-const boardWidth = document.getElementById('width');
-boardHeight.value = 7;
-boardWidth.value = 6;
+const buttons = document.getElementById('buttons');
+buttons.addEventListener('click', function (e) {
+	if (e.target.className === 'start') {
+		const player1 = document.getElementById('player1');
+		const player2 = document.getElementById('player2');
+		player1.value = 'Red';
+		player2.value = 'Blue';
+		new Game(6, 7, player1.value, player2.value);
+	}
+	if (e.target.className === 'change-color') {
+		new Game(6, 7, player1.value, player2.value);
+	}
+});
